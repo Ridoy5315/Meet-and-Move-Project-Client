@@ -1,22 +1,38 @@
+
 export const getNavItems = () => {
   return [
     {
-      title: "Credentials",
+      title: "Explore Events",
       items: [
         {
-          title: "Add New Credential",
+          title: "All Events",
           href: `/credentials/add-new-credential`,
           icon: "FolderPlus",
         },
         {
-          title: "View All Credentials",
+          title: "Upcoming Events",
           href: `/credentials/view-all-credentials`,
           icon: "ScanEye",
         },
         {
-          title: "Manage Credentials",
+          title: "Popular Events",
           href: `/credentials/manage-credentials`,
           icon: "SquareChartGantt",
+        },
+        {
+          title: "Categories",
+          href: `/credentials/manage-credentials`,
+          icon: "SquareChartGantt",
+        },
+      ],
+    },
+    {
+      role: "PUBLIC",
+      items: [
+        {
+          title: "Become Host",
+          href: "/settings",
+          icon: "Settings2",
         },
       ],
     },
