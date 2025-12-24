@@ -2,21 +2,24 @@
 "use server";
 
 import {
+  getDefaultDashboardRoute,
+  isValidRedirectForRole,
   UserRole,
 } from "@/lib/auth-utils";
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
 import { parse } from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { setCookie } from "./tokenHandlers";
+import { deleteCookie, setCookie } from "./tokenHandlers";
 import { loginZodSchema } from "@/zod/auth.validation";
+import { redirect } from "next/navigation";
 
 export const loginUser = async (
   _currentState: any,
   formData: any
 ): Promise<any> => {
   try {
-    //    const redirectTo = formData.get('redirect') || null;
+    const redirectTo = formData.get("redirect") || null;
     let accessTokenObject: null | any = null;
     let refreshTokenObject: null | any = null;
     const payload = {
@@ -92,11 +95,12 @@ export const loginUser = async (
     );
 
     if (typeof verifiedToken === "string") {
-      throw new Error("Invalid token");
+      await deleteCookie("accessToken");
+      await deleteCookie("refreshToken");
+      throw new Error("Your session is invalid. Please login again.");
     }
 
     const userRole: UserRole = verifiedToken.role;
-    
 
     // if (redirectTo && result.data.needPasswordChange) {
     //   const requestedPath = redirectTo.toString();
@@ -106,21 +110,20 @@ export const loginUser = async (
     //     redirect("/reset-password");
     //   }
     // }
-
     // if (result.data.needPasswordChange) {
     //   redirect("/reset-password");
     // }
 
-    // if (redirectTo) {
-    //   const requestedPath = redirectTo.toString();
-    //   if (isValidRedirectForRole(requestedPath, userRole)) {
-    //     redirect(`${requestedPath}?loggedIn=true`);
-    //   } else {
-    //     redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
-    //   }
-    // } else {
-    //   redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
-    // }
+    if (redirectTo) {
+      const requestedPath = redirectTo.toString();
+      if (isValidRedirectForRole(requestedPath, userRole)) {
+        redirect(`${requestedPath}?loggedIn=true`);
+      } else {
+        redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
+      }
+    } else {
+      redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
+    }
     return result;
   } catch (error: any) {
     // Re-throw NEXT_REDIRECT errors so Next.js can handle them

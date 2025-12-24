@@ -21,10 +21,7 @@ import { useActionState, useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { loginUser } from "@/services/auth/loginUser";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ redirect }: { redirect?: string }) {
   const [, startTransition] = useTransition();
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
@@ -61,7 +58,7 @@ export function LoginForm({
     }
   }, [state]);
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
@@ -69,6 +66,7 @@ export function LoginForm({
         </CardHeader>
         <CardContent>
           <form action={formAction}>
+            {redirect && <input type="hidden" name="redirect" value={redirect} />}
             <FieldGroup>
               {/* Email */}
               <Field>
