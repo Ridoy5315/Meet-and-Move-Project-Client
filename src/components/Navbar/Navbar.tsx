@@ -33,11 +33,10 @@ import { getUserInfo } from "@/services/auth/getUserInfo";
 //   user: UserInfo;
 // }
 
-const Navbar = async() => {
+const Navbar = async () => {
   const user = await getUserInfo();
-  const role: NavbarUserRole = user ? user.role : "PUBLIC";
-  console.log(role, "Role")
-  // const role: NavbarUserRole = "PUBLIC";
+  const isAuthenticated = Boolean(user && user.role);
+  const role: NavbarUserRole = isAuthenticated ? user.role : "PUBLIC";
   const navItems: NavSection[] = getNavbarByRole(role);
 
   return (
@@ -157,10 +156,12 @@ const Navbar = async() => {
             </>
           )} */}
           <div className="hidden md:flex items-center space-x-2">
-            {role === "PUBLIC" ? (
+            {!isAuthenticated ? (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="cursor-pointer">Login</Button>
+                  <Button variant="ghost" className="cursor-pointer">
+                    Login
+                  </Button>
                 </Link>
                 <Link href="/register">
                   <Button className="cursor-pointer">Register</Button>
