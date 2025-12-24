@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +17,49 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import InputFieldError from "./shared/InputFieldError";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
+import { toast } from "sonner";
+import { loginUser } from "@/services/auth/loginUser";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-     const [state, formAction, isPending] = useActionState(loginUser, null);
+  const [, startTransition] = useTransition();
+  const [state, formAction, isPending] = useActionState(loginUser, null);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (state && !state.success && state.message) {
+      if (state.message === "No account found") {
+        toast.error(
+          <div>
+            <strong className="text-base">No account found!</strong>
+            <div>No account found. Try again or register a new account.</div>
+          </div>
+        );
+      } else {
+        toast.error(state.message);
+      }
+    } else if (state?.success) {
+      startTransition(() => {
+        setFormData({
+          email: "",
+          password: "",
+        });
+      });
+
+      toast.success("Login successful. Welcome back!");
+      // setTimeout(() => {
+      //   // window.location.href = "/";
+      //   router.push("/");
+      // }, 1000);
+    }
+  }, [state]);
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -31,7 +68,7 @@ export function LoginForm({
           <CardDescription>Sign in to continue to Meet & Move</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={formAction}>
             <FieldGroup>
               {/* Email */}
               <Field>
@@ -41,6 +78,10 @@ export function LoginForm({
                   name="email"
                   type="email"
                   placeholder="meet&move@example.com"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
 
                 <InputFieldError field="email" state={state} />
@@ -60,6 +101,10 @@ export function LoginForm({
                   name="password"
                   type="password"
                   placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                 />
                 <InputFieldError field="password" state={state} />
               </Field>

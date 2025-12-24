@@ -1,5 +1,3 @@
-
-
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -38,7 +36,9 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-primary">University Project</span>
+          <span className="text-xl font-bold text-primary">
+            University Project
+          </span>
         </Link>
 
         <NavigationMenu viewport={false}>
@@ -148,10 +148,12 @@ const Navbar = () => {
               
             </>
           )} */}
-          <Button>Login</Button>
-              <Link href="/register">
-                <Button className="cursor-pointer">Register</Button>
-              </Link>
+          <Link href="/login">
+            <Button className="cursor-pointer">Login</Button>
+          </Link>
+          <Link href="/register">
+            <Button className="cursor-pointer">Register</Button>
+          </Link>
         </div>
       </div>
     </header>
