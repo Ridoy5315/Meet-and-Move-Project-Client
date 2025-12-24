@@ -149,7 +149,9 @@ const Navbar = () => {
             </>
           )} */}
           <Button>Login</Button>
-              <Button>Register</Button>
+              <Link href="/register">
+                <Button className="cursor-pointer">Register</Button>
+              </Link>
         </div>
       </div>
     </header>
