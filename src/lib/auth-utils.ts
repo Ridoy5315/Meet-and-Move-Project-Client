@@ -9,27 +9,27 @@ export const authRoutes = ["/login", "/register", "/forgot-password", "/reset-pa
 
 export const commonProtectedRoutes: RouteConfig = {
     exact: ["/my-profile", "/settings", "/set-password", "/change-password" ],
-    patterns: [], // [/password/change-password, /password/reset-password => /password/*]
+    patterns: [], 
 }
 
 export const superAdminProtectedRoutes: RouteConfig = {
-    patterns: [/^\/super-admin/], // Routes starting with /doctor/* , /assitants, /appointments/*
-    exact: [], // "/assistants"
+    patterns: [/^\/super-admin/], 
+    exact: [], 
 }
 
 export const adminProtectedRoutes: RouteConfig = {
-    patterns: [/^\/admin/], // Routes starting with /admin/*
-    exact: [], // "/admins"
+    patterns: [/^\/admin/], 
+    exact: [], 
 }
 
 export const hostProtectedRoutes: RouteConfig = {
-    patterns: [/^\/host/], // Routes starting with /dashboard/*
-    exact: [], // "/dashboard"
+    patterns: [/^\/host/], 
+    exact: [],
 }
 
 export const userProtectedRoutes: RouteConfig = {
-    patterns: [/^\/dashboard/], // Routes starting with /dashboard/*
-    exact: [], // "/dashboard"
+    patterns: [/^\/dashboard/], 
+    exact: [], 
 }
 
 export const isAuthRoute = (pathname: string) => {
@@ -41,7 +41,6 @@ export const isRouteMatches = (pathname: string, routes: RouteConfig): boolean =
         return true;
     }
     return routes.patterns.some((pattern: RegExp) => pattern.test(pathname))
-    // if pathname === /dashboard/my-appointments => matches /^\/dashboard/ => true
 }
 
 export const getRouteOwner = (pathname: string): "SUPER_ADMIN" | "ADMIN" | "HOST" | "USER" | "COMMON" | null => {

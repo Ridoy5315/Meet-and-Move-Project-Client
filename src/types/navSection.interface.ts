@@ -1,3 +1,4 @@
+import { NavbarUserRole } from "@/lib/navItems.config";
 
 
 export interface NavItem {
@@ -9,4 +10,5 @@ export interface NavItem {
 export interface NavSection {
     title?: string;
     items: NavItem[];
+    roles?: NavbarUserRole[];
 }
