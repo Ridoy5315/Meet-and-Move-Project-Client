@@ -25,6 +25,7 @@ export interface IUserProfile {
 
 export interface UserInfo {
   id: string;
+  name: string;
   email: string;
   role: UserRole;
   gender?: Gender | null;

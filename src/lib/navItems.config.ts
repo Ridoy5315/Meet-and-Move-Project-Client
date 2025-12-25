@@ -45,7 +45,7 @@ export const getNavbarItems = () => {
       items: [
         {
           title: "My Events",
-          href: `/dashboard/my-events/all-events`,
+          href: `/dashboard`,
           icon: "FolderPlus",
         },
       ],
@@ -75,7 +75,7 @@ export const getNavbarItems = () => {
       items: [
         {
           title: "My Events",
-          href: `/host/dashboard/my-events/hosted-events`,
+          href: `/host/dashboard`,
           icon: "FolderPlus",
         },
       ],
@@ -110,7 +110,7 @@ export const getNavbarItems = () => {
       items: [
         {
           title: "Control Panel",
-          href: `/admin/dashboard/control-panel/manage-users`,
+          href: `/admin/dashboard`,
           icon: "FolderPlus",
         },
       ],

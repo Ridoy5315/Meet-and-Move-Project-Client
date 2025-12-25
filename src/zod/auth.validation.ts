@@ -41,6 +41,5 @@ export const loginZodSchema = z.object({
 
   password: z
     .string()
-    .min(8, "Password is required")
-    .max(64, "Password must be at most 40 characters"),
+    .min(1, "Password is required")
 });

@@ -31,6 +31,7 @@ export function LoginForm({ redirect }: { redirect?: string }) {
   });
 
   useEffect(() => {
+    // console.log("state.message",state.message)
     if (state && !state.success && state.message) {
       if (state.message === "No account found") {
         toast.error(
