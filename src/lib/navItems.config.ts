@@ -50,26 +50,7 @@ export const getNavbarItems = () => {
         },
       ],
     },
-    // {
-    //   title: "My Events",
-    //   items: [
-    //     {
-    //       title: "Joined Events",
-    //       href: `/dashboard/my-events/all-events`,
-    //       icon: "FolderPlus",
-    //     },
-    //     {
-    //       title: "Upcoming Events",
-    //       href: `/dashboard/my-events/upcoming-events`,
-    //       icon: "ScanEye",
-    //     },
-    //     {
-    //       title: "Past Events",
-    //       href: `/dashboard/my-events/my-events`,
-    //       icon: "SquareChartGantt",
-    //     },
-    //   ],
-    // },
+
     {
       roles: ["HOST"],
       items: [
@@ -80,31 +61,7 @@ export const getNavbarItems = () => {
         },
       ],
     },
-    // {
-    //   title: "My Events",
-    //   items: [
-    //     {
-    //       title: "Joined Events",
-    //       href: `/host/dashboard/my-events/hosted-events`,
-    //       icon: "FolderPlus",
-    //     },
-    //     {
-    //       title: "Upcoming Events",
-    //       href: `/host/dashboard/my-events/upcoming-hosted-events`,
-    //       icon: "ScanEye",
-    //     },
-    //     {
-    //       title: "Past Events",
-    //       href: `/host/dashboard/my-events/past-hosted-events`,
-    //       icon: "SquareChartGantt",
-    //     },
-    //     {
-    //       title: "Past Events",
-    //       href: `/host/dashboard/my-events/participants-management`,
-    //       icon: "SquareChartGantt",
-    //     },
-    //   ],
-    // },
+   
     {
       roles: ["ADMIN"],
       items: [
@@ -115,26 +72,7 @@ export const getNavbarItems = () => {
         },
       ],
     },
-    // {
-    //   title: "Control Panel",
-    //   items: [
-    //     {
-    //       title: "Manage Users",
-    //       href: `/admin/dashboard/control-panel/manage-users`,
-    //       icon: "FolderPlus",
-    //     },
-    //     {
-    //       title: "Manage Hosts",
-    //       href: `/admin/dashboard/control-panel/manage-hosts`,
-    //       icon: "ScanEye",
-    //     },
-    //     {
-    //       title: "Manage Events",
-    //       href: `/admin/dashboard/control-panel/manage-events`,
-    //       icon: "SquareChartGantt",
-    //     },
-    //   ],
-    // },
+   
     {
       roles: ["PUBLIC", "USER"],
       items: [

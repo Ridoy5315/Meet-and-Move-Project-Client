@@ -29,7 +29,7 @@ export const hostProtectedRoutes: RouteConfig = {
 
 export const userProtectedRoutes: RouteConfig = {
     patterns: [/^\/dashboard/], 
-    exact: [], 
+    exact: ["/become-host"], 
 }
 
 export const isAuthRoute = (pathname: string) => {
