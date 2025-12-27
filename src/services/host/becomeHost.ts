@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use server";
 
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
@@ -63,7 +64,7 @@ export async function becomeHost(_prevState: any, formData: FormData) {
     console.log("become host result", result)
     return result;
   } catch (error: any) {
-    console.error("Create admin error:", error);
+    console.error("Create admin error:", error);  
     return {
       success: false,
       message:

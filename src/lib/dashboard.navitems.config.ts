@@ -97,29 +97,29 @@ export const getCommonNavItems = (role: UserRole) => {
 };
 
 export const adminNavItems: SidebarNavSection[] = [
+  // {
+  //   title: "Administration",
+  //   items: [
+  //     {
+  //       title: "Overview",
+  //       href: "/admin/dashboard",
+  //       icon: "LayoutDashboard",
+  //       roles: ["ADMIN", "SUPER_ADMIN"],
+  //     },
+  //   ],
+  // },
   {
-    title: "Administration",
-    items: [
-      {
-        title: "Overview",
-        href: "/admin/dashboard",
-        icon: "LayoutDashboard",
-        roles: ["ADMIN", "SUPER_ADMIN"],
-      },
-    ],
-  },
-  {
-    title: "User Management",
+    title: "Users Management",
     items: [
       {
         title: "Users",
-        href: "/admin/dashboard/users",
+        href: "/admin/dashboard/users-management",
         icon: "Users",
         roles: ["ADMIN", "SUPER_ADMIN"],
       },
       {
         title: "Hosts",
-        href: "/admin/dashboard/hosts",
+        href: "/admin/dashboard/hosts-management",
         icon: "UserCog",
         roles: ["ADMIN", "SUPER_ADMIN"],
       },
@@ -142,7 +142,7 @@ export const adminNavItems: SidebarNavSection[] = [
       },
       {
         title: "Reported Events",
-        href: "/admin/dashboard/reports",
+        href: "/admin/dashboard/reported-events",
         icon: "AlertTriangle",
         roles: ["ADMIN", "SUPER_ADMIN"],
       },
@@ -153,13 +153,13 @@ export const adminNavItems: SidebarNavSection[] = [
     items: [
       {
         title: "Reviews & Ratings",
-        href: "/admin/dashboard/reviews",
+        href: "/admin/dashboard/reviews-rating",
         icon: "Star",
         roles: ["ADMIN", "SUPER_ADMIN"],
       },
       {
         title: "Blocked Accounts",
-        href: "/admin/dashboard/blocked",
+        href: "/admin/dashboard/blocked-accounts",
         icon: "Ban",
         roles: ["SUPER_ADMIN"],
       },
@@ -191,14 +191,14 @@ export const hostNavItems: SidebarNavSection[] = [
     items: [
       {
         title: "All Events",
-        href: "/host/dashboard/events",
+        href: "/host/dashboard/all-events",
         icon: "Calendar",
         badge: "3",
         roles: ["HOST"],
       },
       {
-        title: "Upcoming",
-        href: "/host/dashboard/events/upcoming",
+        title: "Upcoming Events",
+        href: "/host/dashboard/events/upcoming-events",
         icon: "CalendarClock",
         roles: ["HOST"],
       },
@@ -221,7 +221,7 @@ export const hostNavItems: SidebarNavSection[] = [
       },
       {
         title: "Requests & Approvals",
-        href: "/host/dashboard/participants/requests",
+        href: "/host/dashboard/participants/requests-approvals",
         icon: "UserCheck",
         roles: ["HOST"],
       },
@@ -238,13 +238,13 @@ export const hostNavItems: SidebarNavSection[] = [
     items: [
       {
         title: "Create Event",
-        href: "/host/dashboard/events/create",
+        href: "/host/dashboard/create-event",
         icon: "PlusCircle",
         roles: ["HOST"],
       },
       {
         title: "Draft Events",
-        href: "/host/dashboard/events/drafts",
+        href: "/host/dashboard/drafts-events",
         icon: "FileText",
         roles: ["HOST"],
       },
@@ -267,29 +267,29 @@ export const hostNavItems: SidebarNavSection[] = [
       },
       {
         title: "Ratings & Reviews",
-        href: "/host/dashboard/reviews",
+        href: "/host/dashboard/rating-reviews",
         icon: "Star",
         roles: ["HOST"],
       },
     ],
   },
-  {
-    title: "Host Profile",
-    items: [
-      {
-        title: "Public Profile",
-        href: "/host/profile",
-        icon: "User",
-        roles: ["HOST"],
-      },
-      {
-        title: "Verification",
-        href: "/host/profile/verification",
-        icon: "BadgeCheck",
-        roles: ["HOST"],
-      },
-    ],
-  },
+  // {
+  //   title: "Host Profile",
+  //   items: [
+  //     {
+  //       title: "Public Profile",
+  //       href: "/host/profile",
+  //       icon: "User",
+  //       roles: ["HOST"],
+  //     },
+  //     {
+  //       title: "Verification",
+  //       href: "/host/profile/verification",
+  //       icon: "BadgeCheck",
+  //       roles: ["HOST"],
+  //     },
+  //   ],
+  // },
 ];
 
 

@@ -5,6 +5,7 @@ import { getCookie } from "@/services/auth/tokenHandlers";
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:4000/api";
 
 const serverFetchHelper = async (endpoint: string, options: RequestInit): Promise<Response> => {
+    
     const { headers, ...restOptions } = options;
     const accessToken = await getCookie("accessToken");
 
@@ -21,8 +22,6 @@ const serverFetchHelper = async (endpoint: string, options: RequestInit): Promis
         headers: {
             Cookie: accessToken ? `accessToken=${accessToken}` : "",
             ...headers,
-            // ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
-            // ...(accessToken ? { "Authorization": accessToken } : {}),
 
         },
         ...restOptions,

@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { becomeHost } from "@/services/host/becomeHost";
 import { UserInfo } from "@/types/user.interface";
 import Image from "next/image";
-import { useActionState, useEffect,  useState, useTransition } from "react";
+import { useActionState, useEffect,  useRef,  useState, useTransition } from "react";
 import { toast } from "sonner";
 
 type BecomeHostFormProps = {
@@ -30,6 +30,7 @@ type BecomeHostFormProps = {
 const BecomeHostForm = ({ userInfo }: BecomeHostFormProps) => {
   console.log(userInfo);
   const [, startTransition] = useTransition();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [state, formAction, isPending] = useActionState(becomeHost, null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -52,7 +53,16 @@ const BecomeHostForm = ({ userInfo }: BecomeHostFormProps) => {
 
   useEffect(() => {
     if (state && !state.success && state.message) {
-      toast.error(state.message);
+      if (state.message === "Validation failed") {
+        toast.error("Some required information is missing or invalid.");
+      } else {
+        toast.error(state.message);
+      }
+      if (selectedFile && fileInputRef.current) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(selectedFile);
+        fileInputRef.current.files = dataTransfer.files;
+      }
     } else if (state?.success) {
       startTransition(() => {
         setFormData({
@@ -65,13 +75,14 @@ const BecomeHostForm = ({ userInfo }: BecomeHostFormProps) => {
           bio: "",
           address: "",
         });
+        setSelectedFile(null);
       });
 
       toast.success(
         "Host application submitted successfully! We will review your profile."
       );
     }
-  }, [state]);
+  }, [state, selectedFile]);
 
   return (
     <div className={cn("flex flex-col gap-3")}>
@@ -143,6 +154,7 @@ const BecomeHostForm = ({ userInfo }: BecomeHostFormProps) => {
                   )}
 
                   <Input
+                  ref={fileInputRef}
                     id="file"
                     name="file"
                     type="file"

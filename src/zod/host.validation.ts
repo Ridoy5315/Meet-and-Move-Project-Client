@@ -41,7 +41,7 @@ export const becomeHostZodSchema = z.object({
       return age >= 18;
     }, "You must be at least 18 years old"),
 
-  organization: z.string().max(100, "Organization name is too long"),
+  organization: z.string().min(2, "Organization is required").max(100, "Organization name is too long"),
 
   experienceLevel: z
     .string()
@@ -51,9 +51,9 @@ export const becomeHostZodSchema = z.object({
       "Experience level must be a non-negative number"
     ),
 
-  bio: z.string().max(500, "Bio cannot exceed 500 characters"),
+  bio: z.string().min(2, "Bio is required").max(500, "Bio cannot exceed 500 characters"),
 
-  address: z.string().max(200, "Address is too long"),
+  address: z.string().min(2, "Address is required").max(200, "Address is too long"),
 
   profilePhoto: z
     .instanceof(File)
