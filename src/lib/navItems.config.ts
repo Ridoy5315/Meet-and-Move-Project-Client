@@ -1,43 +1,101 @@
 
-export const getNavItems = () => {
+
+export type NavbarUserRole = "PUBLIC" | "USER" | "HOST" | "ADMIN" | "SUPER_ADMIN";
+
+export const getNavbarItems = () => {
   return [
     {
+      roles: ["PUBLIC", "USER", "HOST", "ADMIN"],
+      items: [
+        {
+          title: "Home",
+          href: "/",
+          icon: "Settings2",
+        },
+      ],
+    },
+    {
       title: "Explore Events",
+      roles: ["PUBLIC", "USER", "HOST"],
       items: [
         {
           title: "All Events",
-          href: `/credentials/add-new-credential`,
+          href: `/explore-events/all-events`,
           icon: "FolderPlus",
         },
         {
           title: "Upcoming Events",
-          href: `/credentials/view-all-credentials`,
+          href: `/explore-events/upcoming-events`,
           icon: "ScanEye",
         },
         {
           title: "Popular Events",
-          href: `/credentials/manage-credentials`,
+          href: `/explore-events/popular-events`,
           icon: "SquareChartGantt",
         },
         {
           title: "Categories",
-          href: `/credentials/manage-credentials`,
+          href: `/explore-events/categories`,
           icon: "SquareChartGantt",
         },
       ],
     },
     {
-      role: "PUBLIC",
+      roles: ["USER"],
+      items: [
+        {
+          title: "My Events",
+          href: `/dashboard`,
+          icon: "FolderPlus",
+        },
+      ],
+    },
+
+    {
+      roles: ["HOST"],
+      items: [
+        {
+          title: "My Events",
+          href: `/host/dashboard`,
+          icon: "FolderPlus",
+        },
+      ],
+    },
+   
+    {
+      roles: ["ADMIN"],
+      items: [
+        {
+          title: "Control Panel",
+          href: `/admin/dashboard`,
+          icon: "FolderPlus",
+        },
+      ],
+    },
+   
+    {
+      roles: ["PUBLIC", "USER"],
       items: [
         {
           title: "Become Host",
-          href: "/settings",
+          href: "/become-host",
+          icon: "Settings2",
+        },
+      ],
+    },
+    {
+      roles: ["HOST"],
+      items: [
+        {
+          title: "Create Events",
+          href: "/create-events",
           icon: "Settings2",
         },
       ],
     },
     {
       title: "Account",
+      roles: ["USER", "HOST", "ADMIN"],
       items: [
         {
           title: "Profile",
@@ -52,15 +110,7 @@ export const getNavItems = () => {
       ],
     },
     {
-      items: [
-        {
-          title: "Settings",
-          href: "/settings",
-          icon: "Settings2",
-        },
-      ],
-    },
-    {
+      roles: ["PUBLIC", "USER", "HOST", "ADMIN"],
       items: [
         {
           title: "About Us",

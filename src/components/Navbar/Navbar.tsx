@@ -1,5 +1,3 @@
-
-
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -23,24 +21,33 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "../ui/navigation-menu";
-import { getNavItems } from "@/lib/navItems.config";
+
 import { NavSection } from "@/types/navSection.interface";
 import { getIconComponent } from "@/lib/icon-mapper";
+import { getNavbarItems, NavbarUserRole } from "@/lib/navItems.config";
+import { getNavbarByRole } from "@/lib/getNavbarByRole";
+import { getUserInfo } from "@/services/auth/getUserInfo";
 // import { UserInfo } from "@/types/user.interface";
 
 // interface NavbarProps {
 //   user: UserInfo;
 // }
 
-const Navbar = () => {
-  const navItems: NavSection[] = getNavItems();
+const Navbar = async () => {
+  const user = await getUserInfo();
+  const isAuthenticated = Boolean(user && user.role);
+  const role: NavbarUserRole = isAuthenticated ? user.role : "PUBLIC";
+  const navItems: NavSection[] = getNavbarByRole(role);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-primary">University Project</span>
+          <span className="text-xl font-bold text-primary">Meet & Move</span>
         </Link>
 
+        {/* Navigation */}
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
             {navItems.map((section, idx) => {
@@ -148,8 +155,24 @@ const Navbar = () => {
               
             </>
           )} */}
-          <Button>Login</Button>
-              <Button>Register</Button>
+          <div className="hidden md:flex items-center space-x-2">
+            {!isAuthenticated ? (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" className="cursor-pointer">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="cursor-pointer">Register</Button>
+                </Link>
+              </>
+            ) : (
+              <Link href="/account/profile">
+                <Button variant="outline">Profile</Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>
