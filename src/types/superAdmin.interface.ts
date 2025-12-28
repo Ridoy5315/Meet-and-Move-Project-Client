@@ -1,9 +1,10 @@
-export interface ISuperAdminProfile {
-  id: string;
+
+
+export interface SuperAdminProfile {
   name: string;
-  email: string;
-  profilePhoto?: string | null;
-  contactNumber?: string | null;
+  gender?: string;
+  profilePhoto?: string;
+  contactNumber?: string;
   createdAt: string;
   updatedAt: string;
 }

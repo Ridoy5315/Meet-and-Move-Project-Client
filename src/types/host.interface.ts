@@ -1,11 +1,15 @@
-export interface IHostProfile {
-  id: string;
+import { Gender } from "./user.interface";
+
+export type HostStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface HostProfile {
   name: string;
-  username: string | null;
-  email: string;
-  profilePhoto: string | null;
-  contactNumber: string | null;
-  organization: string | null;
+  username: string;
+  profilePhoto: string;
+  gender?: Gender;
+  contactNumber: string;
+  dateOfBirth?: string;
+  organization: string;
   experienceLevel: number;
   bio: string | null;
   address: string | null;
@@ -13,7 +17,7 @@ export interface IHostProfile {
   successfulEvents: number;
   cancelledEvents: number;
   hostRating: number;
-  isDeleted: boolean;
+  hostStatus: HostStatus;
   createdAt: string;
   updatedAt: string;
 }

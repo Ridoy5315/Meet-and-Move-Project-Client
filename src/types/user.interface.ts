@@ -1,41 +1,38 @@
 import { UserRole } from "@/lib/auth-utils";
-import { ISuperAdminProfile } from "./superAdmin.interface";
-import { IAdminProfile } from "./admin.interface";
-import { IHostProfile } from "./host.interface";
+import { HostProfile } from "./host.interface";
+import { AdminProfile } from "./admin.interface";
+import { SuperAdminProfile } from "./superAdmin.interface";
 
 export type UserStatus = "ACTIVE" | "BLOCKED" | "SUSPENDED";
 export type Gender = "MALE" | "FEMALE";
 
-export interface IUserProfile {
-  id: string;
+export interface UserProfile {
   name: string;
-  email: string;
-  username?: string | null;
-  profilePhoto?: string | null;
-  contactNumber?: string | null;
-  dateOfBirth?: string | null;
-  bio?: string | null;
+  username?: string;
+  profilePhoto?: string;
+  gender?: Gender;
+  contactNumber?: string;
+  dateOfBirth?: string;
+  bio?: string;
   interests?: string[];
-  address?: string | null;
-  isDeleted: boolean;
+  address?: string;
   isProfilePublic: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface UserInfo {
-  id: string;
-  name: string;
+export interface BaseProfile {
   email: string;
   role: UserRole;
-  gender?: Gender | null;
   status: UserStatus;
   isVerified: boolean;
   createdAt: string;
   updatedAt: string;
+  profile: UserProfile | HostProfile | AdminProfile | SuperAdminProfile | null;
 
-  superAdmin?: ISuperAdminProfile | null;
-  admin?: IAdminProfile | null;
-  host?: IHostProfile | null;
-  user?: IUserProfile | null;
+  // superAdmin?: ISuperAdminProfile | null;
+  // admin?: IAdminProfile | null;
+  // host?: IHostProfile | null;
+  // user?: IUserProfile | null;
 }
+

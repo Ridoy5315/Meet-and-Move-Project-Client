@@ -1,14 +1,14 @@
-export interface IAdminProfile {
-  id: string;
+import { Gender } from "./user.interface";
+
+export interface AdminProfile{
   name: string;
-  username?: string | null;
-  email: string;
-  profilePhoto?: string | null;
-  dateOfBirth?: string | null;
-  contactNumber?: string | null;
-  bio?: string | null;
-  address?: string | null;
-  isDeleted: boolean;
+  username?: string;
+  profilePhoto?: string;
+  gender?: Gender;
+  dateOfBirth?: string;
+  contactNumber?: string;
+  bio?: string;
+  address?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -74,7 +74,7 @@ export const getCommonNavItems = (role: UserRole) => {
     items: [
       {
         title: "Profile",
-        href: "/account/profile",
+        href: "/profile",
         icon: "User",
         roles: ["USER", "HOST", "ADMIN", "SUPER_ADMIN"],
       },
