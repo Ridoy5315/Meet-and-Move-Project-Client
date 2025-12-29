@@ -7,7 +7,7 @@ const MyProfilePage = async() => {
   const data = await getUserInfo();
   return (
     <div className="max-w-5xl mx-auto space-y-8 bg-white p-6 rounded-2xl shadow-sm">
-      <ProfileActions role={data.role} />
+      <ProfileActions data={data} />
       <RoleBasedProfile data={data} />
     </div>
   )

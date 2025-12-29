@@ -1,16 +1,39 @@
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { UserRole } from "@/lib/auth-utils";
 
+import { useState, useTransition } from "react";
 
-export function ProfileActions({ role }: { role: UserRole }) {
+import { BaseProfile } from "@/types/user.interface";
+import EditProfileDialog from "./EditProfileDialog";
+import { useRouter } from "next/navigation";
+
+interface ProfileActionsProps {
+  data: BaseProfile;
+}
+
+export function ProfileActions({ data }: ProfileActionsProps) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+  const [open, setOpen] = useState(false);
+
+  const handleSuccess = () => {
+    startTransition(() => {
+      router.refresh();
+    });
+  };
   return (
     <div className="flex justify-end gap-3">
-      <Link href="/profile/edit">
-        <Button>Edit Profile</Button>
-      </Link>
+      <Button onClick={() => setOpen(true)}>Edit Profile</Button>
 
-      {(role === "ADMIN" || role === "SUPER_ADMIN") && (
+      <EditProfileDialog
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={handleSuccess}
+        data={data}
+      />
+
+      {(data?.role === "ADMIN" || data?.role === "SUPER_ADMIN") && (
         <Link href="/dashboard">
           <Button variant="outline">Manage Platform</Button>
         </Link>
