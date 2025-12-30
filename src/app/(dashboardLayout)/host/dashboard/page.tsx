@@ -1,9 +1,20 @@
-import React from 'react'
+import { Button } from "@/components/ui/button";
+import { ArrowLeftFromLine } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 
 const HostOverviewPage = () => {
   return (
-    <div>HostOverviewPage</div>
-  )
-}
+    <>
+      <Link href="/">
+        <Button>
+          <ArrowLeftFromLine />
+          Home
+        </Button>
+      </Link>
+      <div>HostOverviewPage</div>
+    </>
+  );
+};
 
-export default HostOverviewPage
+export default HostOverviewPage;

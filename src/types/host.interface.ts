@@ -3,6 +3,7 @@ import { Gender } from "./user.interface";
 export type HostStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface HostProfile {
+  id: string;
   name: string;
   username: string;
   profilePhoto: string;

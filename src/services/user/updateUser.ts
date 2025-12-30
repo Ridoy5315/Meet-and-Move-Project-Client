@@ -4,6 +4,7 @@
 import { dateToISO } from "@/lib/dateToIso";
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
+import { Gender } from "@/types/user.interface";
 import { updateUserZodSchema } from "@/zod/updateUser.validation";
 import { revalidateTag } from "next/cache";
 
@@ -28,7 +29,7 @@ export async function updateUserProfile(
     name: formData.get("name") as string,
     username: formData.get("username") as string,
     contactNumber: formData.get("contactNumber") as string,
-    gender: formData.get("gender") as string,
+    gender: formData.get("gender") as Gender,
     dateOfBirth: dateToISO(formData.get("dateOfBirth")),
     bio: formData.get("bio") as string,
     address: formData.get("address") as string,

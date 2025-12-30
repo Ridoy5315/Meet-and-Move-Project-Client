@@ -1,0 +1,133 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use server";
+
+import { serverFetch } from "@/lib/server-fetch";
+import { zodValidator } from "@/lib/zodValidator";
+import { createEventZodSchema } from "@/zod/createEvent.validation";
+import { revalidateTag } from "next/cache";
+
+export async function createEvent(id: string, _prevState: any, formData: FormData) {
+  // 1️⃣ Parse JSON fields (tags)
+  const tagsRaw = formData.get("tags") as string;
+
+  let tags: string[] = [];
+  try {
+    const parsed = tagsRaw ? JSON.parse(tagsRaw) : [];
+
+    tags = parsed
+      .flatMap((tag: string) => tag.split(",").map((t) => t.trim()))
+      .filter(Boolean);
+  } catch {
+    tags = [];
+  }
+
+  // 2️⃣ Handle file
+  const file = formData.get("image");
+
+  // 3️⃣ Build validation payload
+  const validationPayload = {
+    title: formData.get("title") as string,
+    category: formData.get("category") as "EVENT" | "ACTIVITY",
+
+    date: formData.get("date") as string,
+    startTime: formData.get("startTime") as string,
+    endTime: formData.get("endTime") as string,
+
+    location: formData.get("location") as string,
+    isOnline: formData.get("isOnline") === "on",
+
+    priceType: formData.get("priceType") as "FREE" | "PAID",
+    price: formData.get("price") ? Number(formData.get("price")) : undefined,
+
+    capacity: Number(formData.get("capacity")),
+
+    description: formData.get("description") as string,
+    tags,
+
+    image: file instanceof File && file.size > 0 ? file : undefined,
+  };
+
+//   console.log("validationPayload", validationPayload);
+
+    const validatedPayload = zodValidator(
+      validationPayload,
+      createEventZodSchema
+    );
+
+    if (!validatedPayload.success && validatedPayload.errors) {
+      return {
+        success: false,
+        message: "Validation failed",
+        formData: validationPayload,
+        errors: validatedPayload.errors,
+      };
+    }
+
+    if (!validatedPayload.data) {
+      return {
+        success: false,
+        message: "Validation failed",
+        formData: validationPayload,
+      };
+    }
+
+    // 5️⃣ Backend JSON payload (NO file here)
+    const backendPayload = {
+      title: validatedPayload.data.title,
+      category: validatedPayload.data.category,
+
+      date: validatedPayload.data.date,
+      startTime: validatedPayload.data.startTime,
+      endTime: validatedPayload.data.endTime,
+
+      location: validatedPayload.data.location,
+      isOnline: validatedPayload.data.isOnline,
+
+      priceType: validatedPayload.data.priceType,
+      price: validatedPayload.data.price,
+
+      capacity: validatedPayload.data.capacity,
+
+      description: validatedPayload.data.description,
+      tags: validatedPayload.data.tags,
+    };
+
+    console.log("backendPayload", backendPayload);
+
+    const newFormData = new FormData();
+    newFormData.append("data", JSON.stringify(backendPayload));
+
+    if (validatedPayload.data.image) {
+      newFormData.append(
+        "file",
+        validatedPayload.data.image as File
+      );
+    }
+
+    // 7️⃣ API call
+    try {
+      const response = await serverFetch.post(`/event/create-event/${id}`, {
+        body: newFormData,
+      });
+
+      const result = await response.json();
+
+      if (result?.success) {
+        revalidateTag("events", "default");
+      }
+
+      console.log("create event result:", result);
+      return result;
+    } catch (error: any) {
+      console.error("Create event error:", error);
+
+      return {
+        success: false,
+        message:
+          process.env.NODE_ENV === "development"
+            ? error.message
+            : "Failed to create event",
+        formData: validationPayload,
+      };
+    }
+}

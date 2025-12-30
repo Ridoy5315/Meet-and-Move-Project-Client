@@ -14,7 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import { BaseProfile } from "@/types/user.interface";
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { toast } from "sonner";
 import { getEditableFields } from "@/lib/profileEditableFields";
 import { InterestInput } from "./InterestInput";
@@ -27,6 +33,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -41,6 +48,8 @@ const EditProfileDialog = ({
   onSuccess,
   data,
 }: EditProfileDialogProps) => {
+  // const router = useRouter();
+  // const [, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handledRef = useRef(false);
@@ -98,24 +107,31 @@ const EditProfileDialog = ({
 
     setSelectedFile(null);
     setInterests(profile?.interests || []);
-
-    onClose();
   };
 
   useEffect(() => {
-    if (open) {
-      handledRef.current = false;
-    }
-  }, [open]);
+  if (open) {
+    handledRef.current = false;
+  }
+}, [open]);
 
   useEffect(() => {
-    if (state?.success && !handledRef.current) {
-      handledRef.current = true;
+     if (!open) return;
+  if (!state) return;
+  if (handledRef.current) return;
 
+  handledRef.current = true;
+    if (state?.success) {
+      handledRef.current = true;
       toast.success(state.message || "Profile updated successfully");
-      onClose(); // close dialog only
+      // if (formRef.current) {
+      //   formRef.current.reset();
+      // }
+      handleClose();
+      onClose();
+      onSuccess();
     }
-    if (state?.message && !state.success && !handledRef.current) {
+    if (state?.message && !state.success ) {
       handledRef.current = true;
       if (
         state?.message?.includes("Body exceeded") ||
@@ -125,18 +141,18 @@ const EditProfileDialog = ({
       } else {
         toast.error(state.message || "Something went wrong");
       }
-      if (selectedFile && fileInputRef.current) {
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(selectedFile);
-        fileInputRef.current.files = dataTransfer.files;
-      }
+      // if (selectedFile && fileInputRef.current) {
+      //   const dataTransfer = new DataTransfer();
+      //   dataTransfer.items.add(selectedFile);
+      //   fileInputRef.current.files = dataTransfer.files;
+      // }
     }
-  }, [state, handleClose, onSuccess, onClose]);
+  }, [state, onClose, onSuccess, open]);
 
   if (!profile) return null;
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 pt-6 pb-4">
           <DialogTitle>Edit Profile</DialogTitle>
@@ -233,10 +249,11 @@ const EditProfileDialog = ({
                   id="gender"
                   name="gender"
                   placeholder="Select gender"
-                  defaultValue={profile.gender || ""}
+                  // defaultValue={profile.gender || ""}
                   // defaultValue={
                   //   state?.formData?.gender || (isEdit ? doctor?.gender : "")
                   // }
+                  value={gender}
                   type="hidden"
                 />
                 <Select

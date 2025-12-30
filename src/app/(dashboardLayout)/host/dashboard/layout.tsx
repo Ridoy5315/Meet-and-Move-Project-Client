@@ -1,8 +1,12 @@
 import React from 'react'
 
-const HostOverViewLayout = () => {
+const HostOverViewLayout = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   return (
-    <div>HostOverViewLayout</div>
+    <div>{children}</div>
   )
 }
 
