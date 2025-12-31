@@ -21,6 +21,12 @@ export async function createEvent(id: string, _prevState: any, formData: FormDat
     tags = [];
   }
 
+  const priceType = formData.get("priceType") as "FREE" | "PAID";
+  const price =
+  priceType === "FREE"
+    ? 0
+    : Number(formData.get("price"));
+
   // 2️⃣ Handle file
   const file = formData.get("image");
 
@@ -30,14 +36,14 @@ export async function createEvent(id: string, _prevState: any, formData: FormDat
     category: formData.get("category") as "EVENT" | "ACTIVITY",
 
     date: formData.get("date") as string,
+    registrationDeadline: formData.get("registrationDeadline") as string,
     startTime: formData.get("startTime") as string,
     endTime: formData.get("endTime") as string,
 
     location: formData.get("location") as string,
-    isOnline: formData.get("isOnline") === "on",
 
     priceType: formData.get("priceType") as "FREE" | "PAID",
-    price: formData.get("price") ? Number(formData.get("price")) : undefined,
+    price: price,
 
     capacity: Number(formData.get("capacity")),
 
@@ -77,6 +83,7 @@ export async function createEvent(id: string, _prevState: any, formData: FormDat
       category: validatedPayload.data.category,
 
       date: validatedPayload.data.date,
+      registrationDeadline: validatedPayload.data.registrationDeadline,
       startTime: validatedPayload.data.startTime,
       endTime: validatedPayload.data.endTime,
 
@@ -130,4 +137,18 @@ export async function createEvent(id: string, _prevState: any, formData: FormDat
         formData: validationPayload,
       };
     }
+}
+
+
+export async function getAllEvents() {
+  try {
+    const res = await serverFetch.get(`/`);
+
+    const result = await res.json();
+
+    console.log("ALL Events", result)
+    return result;
+  } catch (error) {
+    console.log(error)
+  }
 }

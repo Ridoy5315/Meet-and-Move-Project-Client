@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useActionState,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 
@@ -28,14 +21,6 @@ import { BaseProfile } from "@/types/user.interface";
 import { HostProfile } from "@/types/host.interface";
 import { Loader2 } from "lucide-react";
 
-type ActionState = {
-  success?: boolean;
-  message?: string;
-  errors?: Record<string, string>;
-};
-
-const initialState: ActionState = {};
-
 interface ProfileActionsProps {
   data: BaseProfile;
 }
@@ -45,7 +30,6 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
   const profile = data?.profile as HostProfile;
   console.log("data", profile);
 
-  const tagsRef = useRef<string[]>([]);
   const [state, formAction, isPending] = useActionState(
     createEvent.bind(null, profile?.id),
     null
@@ -53,16 +37,15 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
-  const tagsJson = useMemo(() => JSON.stringify(tags), [tags]);
 
   const [formData, setFormData] = useState({
     title: "",
     category: "EVENT",
     date: "",
+    registrationDeadline: "",
     startTime: "",
     endTime: "",
     location: "",
-    isOnline: false,
     priceType: "FREE",
     price: "",
     capacity: "",
@@ -91,10 +74,10 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
           title: "",
           category: "EVENT",
           date: "",
+          registrationDeadline: "",
           startTime: "",
           endTime: "",
           location: "",
-          isOnline: false,
           priceType: "FREE",
           price: "",
           capacity: "",
@@ -157,7 +140,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
           {/* Date + Time */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Field>
-              <FieldLabel htmlFor="date">Date</FieldLabel>
+              <FieldLabel htmlFor="date">Event Date</FieldLabel>
               <Input
                 id="date"
                 name="date"
@@ -171,14 +154,49 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
             </Field>
 
             <Field>
+              <FieldLabel htmlFor="registrationDeadline">
+                Registration Deadline
+              </FieldLabel>
+              <Input
+                id="registrationDeadline"
+                name="registrationDeadline"
+                type="date"
+                value={formData.registrationDeadline}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    registrationDeadline: e.target.value,
+                  })
+                }
+              />
+              <InputFieldError field="registrationDeadline" state={state} />
+            </Field>
+
+            <Field>
               <FieldLabel htmlFor="startTime">Start Time</FieldLabel>
-              <Input id="startTime" name="startTime" type="time" />
+              <Input
+                id="startTime"
+                name="startTime"
+                type="time"
+                value={formData.startTime}
+                onChange={(e) =>
+                  setFormData({ ...formData, startTime: e.target.value })
+                }
+              />
               <InputFieldError field="startTime" state={state} />
             </Field>
 
             <Field>
               <FieldLabel htmlFor="endTime">End Time</FieldLabel>
-              <Input id="endTime" name="endTime" type="time" />
+              <Input
+                id="endTime"
+                name="endTime"
+                type="time"
+                value={formData.endTime}
+                onChange={(e) =>
+                  setFormData({ ...formData, endTime: e.target.value })
+                }
+              />
               <InputFieldError field="endTime" state={state} />
             </Field>
           </div>
@@ -199,7 +217,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
               <InputFieldError field="location" state={state} />
             </Field>
 
-            <Field className="flex items-end gap-2">
+            {/* <Field className="flex items-end gap-2">
               <input
                 id="isOnline"
                 name="isOnline"
@@ -212,7 +230,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
               <label htmlFor="isOnline" className="text-sm">
                 Online
               </label>
-            </Field>
+            </Field> */}
           </div>
 
           {/* Price + Capacity */}
@@ -222,8 +240,16 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
               <select
                 id="priceType"
                 name="priceType"
+                value={formData.priceType}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData({
+                    ...formData,
+                    priceType: value,
+                    price: value === "FREE" ? "0" : formData.price, // auto reset
+                  });
+                }}
                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                defaultValue="FREE"
               >
                 <option value="FREE">Free</option>
                 <option value="PAID">Paid</option>
@@ -239,8 +265,14 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
                 type="number"
                 min={0}
                 value={formData.price}
+                disabled={formData.priceType === "FREE"}
                 onChange={(e) =>
                   setFormData({ ...formData, price: e.target.value })
+                }
+                className={
+                  formData.priceType === "FREE"
+                    ? "cursor-not-allowed bg-muted"
+                    : ""
                 }
               />
               <InputFieldError field="price" state={state} />

@@ -6,7 +6,7 @@ const HostOverViewLayout = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div>{children}</div>
+    <div className='p-0'>{children}</div>
   )
 }
 

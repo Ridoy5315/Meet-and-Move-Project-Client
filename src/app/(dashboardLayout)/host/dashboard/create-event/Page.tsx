@@ -1,24 +1,28 @@
-import CreateEventForm from '@/components/modules/host/CreateEventForm'
-import { getUserInfo } from '@/services/auth/getUserInfo';
-import React from 'react'
+import CreateEventForm from "@/components/modules/host/CreateEventForm";
+import PageHeader from "@/components/shared/page/PageHeader";
+import PageLayout from "@/components/shared/page/PageLayout";
+import { Button } from "@/components/ui/button";
+import { getUserInfo } from "@/services/auth/getUserInfo";
+import { CalendarPlus } from "lucide-react";
 
-const CreateEventPage = async() => {
+const CreateEventPage = async () => {
   const data = await getUserInfo();
   return (
-    <div className="space-y-6">
-      {/* Page header (dashboard-like, not auth-like) */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Create Event</h1>
-          <p className="text-sm text-muted-foreground">
-            Publish a professional event/activity with image, time, location, and capacity.
-          </p>
-        </div>
+    <PageLayout
+      header={
+        <PageHeader
+          title="Create Event"
+          description="Fill in the details to create a new event or activity."
+          icon={<CalendarPlus className="h-6 w-6" />}
+          actions={<Button variant="outline">Back</Button>}
+        />
+      }
+    >
+      <div className="rounded-lg border bg-background p-6 shadow-sm">
+        <CreateEventForm data={data} />
       </div>
+    </PageLayout>
+  );
+};
 
-      <CreateEventForm data={data} />
-    </div>
-  )
-}
-
-export default CreateEventPage
+export default CreateEventPage;
