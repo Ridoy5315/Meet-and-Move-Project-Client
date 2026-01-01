@@ -45,12 +45,7 @@ const EventUpdateDialog = ({
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
 
-  const [priceType, setPriceType] = useState<"FREE" | "PAID">(event?.priceType);
-  useEffect(() => {
-    if (open && event?.priceType) {
-      setPriceType(event?.priceType);
-    }
-  }, [open, event]);
+  const [priceType, setPriceType] = useState<"FREE" | "PAID">("FREE");
 
   const handleAddTag = () => {
     const value = tagInput.trim();
@@ -67,10 +62,17 @@ const EventUpdateDialog = ({
   };
 
   useEffect(() => {
-    if (open && event?.tags) {
-      setTags(event.tags.map(capitalizeFirstLetter));
+    if (!open || !event) return;
+
+    setPriceType(event.priceType);
+    setTags(event.tags.map(capitalizeFirstLetter));
+    setTagInput("");
+    setSelectedFile(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
-  }, [open, event]);
+  }, [open, event?.id]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
