@@ -6,7 +6,11 @@ import { zodValidator } from "@/lib/zodValidator";
 import { createEventZodSchema } from "@/zod/createEvent.validation";
 import { revalidateTag } from "next/cache";
 
-export async function createEvent(id: string, _prevState: any, formData: FormData) {
+export async function createEvent(
+  id: string,
+  _prevState: any,
+  formData: FormData
+) {
   // 1️⃣ Parse JSON fields (tags)
   const tagsRaw = formData.get("tags") as string;
 
@@ -22,10 +26,7 @@ export async function createEvent(id: string, _prevState: any, formData: FormDat
   }
 
   const priceType = formData.get("priceType") as "FREE" | "PAID";
-  const price =
-  priceType === "FREE"
-    ? 0
-    : Number(formData.get("price"));
+  const price = priceType === "FREE" ? 0 : Number(formData.get("price"));
 
   // 2️⃣ Handle file
   const file = formData.get("image");
@@ -53,102 +54,206 @@ export async function createEvent(id: string, _prevState: any, formData: FormDat
     image: file instanceof File && file.size > 0 ? file : undefined,
   };
 
-//   console.log("validationPayload", validationPayload);
+  //   console.log("validationPayload", validationPayload);
 
-    const validatedPayload = zodValidator(
-      validationPayload,
-      createEventZodSchema
-    );
+  const validatedPayload = zodValidator(
+    validationPayload,
+    createEventZodSchema
+  );
 
-    if (!validatedPayload.success && validatedPayload.errors) {
-      return {
-        success: false,
-        message: "Validation failed",
-        formData: validationPayload,
-        errors: validatedPayload.errors,
-      };
-    }
-
-    if (!validatedPayload.data) {
-      return {
-        success: false,
-        message: "Validation failed",
-        formData: validationPayload,
-      };
-    }
-
-    // 5️⃣ Backend JSON payload (NO file here)
-    const backendPayload = {
-      title: validatedPayload.data.title,
-      category: validatedPayload.data.category,
-
-      date: validatedPayload.data.date,
-      registrationDeadline: validatedPayload.data.registrationDeadline,
-      startTime: validatedPayload.data.startTime,
-      endTime: validatedPayload.data.endTime,
-
-      location: validatedPayload.data.location,
-      isOnline: validatedPayload.data.isOnline,
-
-      priceType: validatedPayload.data.priceType,
-      price: validatedPayload.data.price,
-
-      capacity: validatedPayload.data.capacity,
-
-      description: validatedPayload.data.description,
-      tags: validatedPayload.data.tags,
+  if (!validatedPayload.success && validatedPayload.errors) {
+    return {
+      success: false,
+      message: "Validation failed",
+      formData: validationPayload,
+      errors: validatedPayload.errors,
     };
+  }
 
-    console.log("backendPayload", backendPayload);
+  if (!validatedPayload.data) {
+    return {
+      success: false,
+      message: "Validation failed",
+      formData: validationPayload,
+    };
+  }
 
-    const newFormData = new FormData();
-    newFormData.append("data", JSON.stringify(backendPayload));
+  // 5️⃣ Backend JSON payload (NO file here)
+  const backendPayload = {
+    title: validatedPayload.data.title,
+    category: validatedPayload.data.category,
 
-    if (validatedPayload.data.image) {
-      newFormData.append(
-        "file",
-        validatedPayload.data.image as File
-      );
+    date: validatedPayload.data.date,
+    registrationDeadline: validatedPayload.data.registrationDeadline,
+    startTime: validatedPayload.data.startTime,
+    endTime: validatedPayload.data.endTime,
+
+    location: validatedPayload.data.location,
+    isOnline: validatedPayload.data.isOnline,
+
+    priceType: validatedPayload.data.priceType,
+    price: validatedPayload.data.price,
+
+    capacity: validatedPayload.data.capacity,
+
+    description: validatedPayload.data.description,
+    tags: validatedPayload.data.tags,
+  };
+
+  console.log("backendPayload", backendPayload);
+
+  const newFormData = new FormData();
+  newFormData.append("data", JSON.stringify(backendPayload));
+
+  if (validatedPayload.data.image) {
+    newFormData.append("file", validatedPayload.data.image as File);
+  }
+
+  // 7️⃣ API call
+  try {
+    const response = await serverFetch.post(`/event/create-event/${id}`, {
+      body: newFormData,
+    });
+
+    const result = await response.json();
+
+    if (result?.success) {
+      revalidateTag("events", "default");
     }
 
-    // 7️⃣ API call
-    try {
-      const response = await serverFetch.post(`/event/create-event/${id}`, {
-        body: newFormData,
-      });
+    console.log("create event result:", result);
+    return result;
+  } catch (error: any) {
+    console.error("Create event error:", error);
 
-      const result = await response.json();
-
-      if (result?.success) {
-        revalidateTag("events", "default");
-      }
-
-      console.log("create event result:", result);
-      return result;
-    } catch (error: any) {
-      console.error("Create event error:", error);
-
-      return {
-        success: false,
-        message:
-          process.env.NODE_ENV === "development"
-            ? error.message
-            : "Failed to create event",
-        formData: validationPayload,
-      };
-    }
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Failed to create event",
+      formData: validationPayload,
+    };
+  }
 }
 
-
-export async function getAllEvents() {
+export async function getAllEvents(queryString?: string) {
   try {
-    const res = await serverFetch.get(`/`);
+    const res = await serverFetch.get(
+      `/event${queryString ? `?${queryString}` : ""}`
+    );
 
     const result = await res.json();
 
-    console.log("ALL Events", result)
+    console.log("ALL Events", result);
     return result;
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    console.log(error);
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong"
+      }`,
+    };
+  }
+}
+
+// export async function updateEvent(id: string, _prevState: any, formData: FormData) {
+//     const experienceValue = formData.get("experience");
+//     const appointmentFeeValue = formData.get("appointmentFee");
+
+
+//     const validationPayload: Partial<IDoctor> = {
+//         name: formData.get("name") as string,
+//         contactNumber: formData.get("contactNumber") as string,
+//         address: formData.get("address") as string,
+//         registrationNumber: formData.get("registrationNumber") as string,
+//         experience: experienceValue ? Number(experienceValue) : 0,
+//         gender: formData.get("gender") as "MALE" | "FEMALE",
+//         appointmentFee: appointmentFeeValue ? Number(appointmentFeeValue) : 0,
+//         qualification: formData.get("qualification") as string,
+//         currentWorkingPlace: formData.get("currentWorkingPlace") as string,
+//         designation: formData.get("designation") as string,
+//     };
+
+//     // Parse specialties array (for adding new specialties)
+//     const specialtiesValue = formData.get("specialties") as string;
+//     if (specialtiesValue) {
+//         try {
+//             const parsed = JSON.parse(specialtiesValue);
+//             if (Array.isArray(parsed) && parsed.length > 0) {
+//                 validationPayload.specialties = parsed;
+//             }
+//         } catch {
+//             // Ignore invalid JSON
+//         }
+//     }
+
+//     // Parse removeSpecialties array (for removing existing specialties)
+//     const removeSpecialtiesValue = formData.get("removeSpecialties") as string;
+//     if (removeSpecialtiesValue) {
+//         try {
+//             const parsed = JSON.parse(removeSpecialtiesValue);
+//             if (Array.isArray(parsed) && parsed.length > 0) {
+//                 validationPayload.removeSpecialties = parsed;
+//             }
+//         } catch {
+//             // Ignore invalid JSON
+//         }
+//     }
+//     const validatedPayload = zodValidator(validationPayload, updateDoctorZodSchema);
+
+//     if (!validatedPayload.success && validatedPayload.errors) {
+//         return {
+//             success: validatedPayload.success,
+//             message: "Validation failed",
+//             formData: validationPayload,
+//             errors: validatedPayload.errors,
+//         }
+//     }
+
+//     if (!validatedPayload.data) {
+//         return {
+//             success: false,
+//             message: "Validation failed",
+//             formData: validationPayload,
+//         }
+//     }
+
+//     try {
+//         const response = await serverFetch.patch(`/doctor/${id}`, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(validatedPayload.data),
+//         })
+//         const result = await response.json();
+//         return result;
+//     } catch (error: any) {
+//         console.log(error);
+//         return {
+//             success: false, message: `${process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'}`,
+//             formData: validationPayload,
+//         }
+//     }
+// }
+
+export async function softDeleteEvent(id: string) {
+  try {
+    const response = await serverFetch.delete(`/host/event/softDelete/${id}`);
+    const result = await response.json();
+    return result;
+  } catch (error: any) {
+    console.log(error);
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong"
+      }`,
+    };
   }
 }
