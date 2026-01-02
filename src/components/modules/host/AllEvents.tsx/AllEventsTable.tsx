@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { eventsColumns } from "./EventsColumns";
 import EventUpdateDialog from "./EventUpdateFormDialog";
 import EventViewDetailDialog from "./EventViewDetailDialog";
+import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
 
 interface EventsTableProps {
   events: IEvent[];
@@ -83,6 +84,16 @@ const AllEventsTable = ({ events }: EventsTableProps) => {
         onClose={() => setViewingEvent(null)}
         event={viewingEvent}
       ></EventViewDetailDialog>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={!!deletingEvent}
+        onOpenChange={(open) => !open && setDeletingEvent(null)}
+        onConfirm={confirmDelete}
+        title="Delete Event"
+        description={`Are you sure you want to delete ${deletingEvent?.title}? This action cannot be undone.`}
+        isDeleting={isDeleting}
+      />
     </>
   );
 };
