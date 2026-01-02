@@ -301,6 +301,7 @@ const EventUpdateDialog = ({
                     min="0"
                     defaultValue={event?.price ?? ""}
                   />
+                  <InputFieldError state={state} field="price" />
                 </Field>
               )}
 
@@ -314,6 +315,7 @@ const EventUpdateDialog = ({
                   min="1"
                   defaultValue={event?.capacity}
                 />
+                <InputFieldError state={state} field="capacity" />
               </Field>
             </div>
 

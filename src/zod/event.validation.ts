@@ -59,7 +59,7 @@ export const updateEventZodSchema = z
 
     priceType: z.enum(["FREE", "PAID"]).optional(),
 
-    price: z.coerce.number().min(0, "Price can't be negative").optional(),
+    price: z.coerce.number().min(1, "Price can't be negative").optional(),
 
     capacity: z.coerce.number().int().min(1, "Capacity must be at least 1").optional(),
 

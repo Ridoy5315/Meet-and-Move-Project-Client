@@ -7,6 +7,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { eventsColumns } from "./EventsColumns";
 import EventUpdateDialog from "./EventUpdateFormDialog";
+import EventViewDetailDialog from "./EventViewDetailDialog";
 
 interface EventsTableProps {
   events: IEvent[];
@@ -77,6 +78,11 @@ const AllEventsTable = ({ events }: EventsTableProps) => {
           setTimeout(() => handleRefresh(), 100);
         }}
       />
+      <EventViewDetailDialog
+        open={!!viewingEvent}
+        onClose={() => setViewingEvent(null)}
+        event={viewingEvent}
+      ></EventViewDetailDialog>
     </>
   );
 };
