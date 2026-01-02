@@ -20,7 +20,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { capitalizeFirstLetter } from "@/lib/capitalizeFirstLetter";
+import { updateEvent } from "@/services/host/event";
 import { IEvent } from "@/types/event.interface";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -40,12 +42,23 @@ const EventUpdateDialog = ({
 }: EventUpdateDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasHandledSuccess = useRef(false);
+  const toastShownRef = useRef(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
 
   const [priceType, setPriceType] = useState<"FREE" | "PAID">("FREE");
+
+  const [state, formAction, isPending] = useActionState(
+    (prevState: any, formData: FormData) => {
+      if (formData.get("_reset") === "true") return null; // Initial null state
+      return updateEvent.bind(null, event?.id)(prevState, formData);
+    },
+    null
+  );
+  const prevStateRef = useRef(state);
 
   const handleAddTag = () => {
     const value = tagInput.trim();
@@ -84,20 +97,37 @@ const EventUpdateDialog = ({
   const isRegistrationClosed =
     new Date(event?.registrationDeadline) < new Date();
 
-  //   const [state, formAction, pending] = useActionState(
-  //     updateEvent.bind(null, event.id),
-  //     null
-  //   );
+  useEffect(() => {
+    if (state?.success && prevStateRef.current?.success !== true) {
+      if (!toastShownRef.current) {
+        toastShownRef.current = true;
+        toast.success(state.message || "Event updated successfully", {
+          id: "event-update-success",
+        });
+      }
+      if (formRef.current) formRef.current.reset();
+      onClose();
+      setTimeout(() => {
+        onClose();
+        onSuccess();
+      }, 0);
+    } else if (
+      state &&
+      !state.success &&
+      prevStateRef.current?.success !== false
+    ) {
+      toast.error(state.message, { id: "event-update-error" });
+    }
+    prevStateRef.current = state;
+  }, [state, onSuccess, onClose]);
 
-  //   useEffect(() => {
-  //     if (state?.success) {
-  //       toast.success(state.message || "Event updated successfully");
-  //       onSuccess();
-  //       onClose();
-  //     } else if (state && !state.success) {
-  //       toast.error(state.message);
-  //     }
-  //   }, [state, onSuccess, onClose]);
+  useEffect(() => {
+    if (!open) {
+      toastShownRef.current = false;
+      hasHandledSuccess.current = false;
+      prevStateRef.current = null; // Add this
+    }
+  }, [open, state]);
 
   useEffect(() => {
     return () => {
@@ -116,7 +146,7 @@ const EventUpdateDialog = ({
 
         <form
           ref={formRef}
-          // action={formAction}
+          action={formAction}
           className={`flex flex-col flex-1 min-h-0 ${
             isCompleted ? "opacity-60 pointer-events-none" : ""
           }`}
@@ -137,7 +167,7 @@ const EventUpdateDialog = ({
             <Field>
               <FieldLabel htmlFor="title">Event Title</FieldLabel>
               <Input id="title" name="title" defaultValue={event?.title} />
-              {/* <InputFieldError state={state} field="title" /> */}
+              <InputFieldError state={state} field="title" />
             </Field>
 
             {/* Description */}
@@ -148,7 +178,7 @@ const EventUpdateDialog = ({
                 name="description"
                 defaultValue={event?.description}
               />
-              {/* <InputFieldError state={state} field="description" /> */}
+              <InputFieldError state={state} field="description" />
             </Field>
 
             <Field>
@@ -177,7 +207,7 @@ const EventUpdateDialog = ({
                 onChange={handleFileChange}
               />
 
-              {/* <InputFieldError state={state} field="image" /> */}
+              <InputFieldError state={state} field="image" />
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
@@ -190,7 +220,7 @@ const EventUpdateDialog = ({
                   type="date"
                   defaultValue={event?.date.split("T")[0]}
                 />
-                {/* <InputFieldError state={state} field="date" /> */}
+                <InputFieldError state={state} field="date" />
               </Field>
 
               {/* Registration Deadline */}
@@ -204,10 +234,7 @@ const EventUpdateDialog = ({
                   type="date"
                   defaultValue={event?.registrationDeadline.split("T")[0]}
                 />
-                {/* <InputFieldError
-                state={state}
-                field="registrationDeadline"
-              /> */}
+                <InputFieldError state={state} field="registrationDeadline" />
               </Field>
             </div>
 
@@ -341,14 +368,15 @@ const EventUpdateDialog = ({
               type="button"
               variant="outline"
               onClick={onClose}
-              //     disabled={pending}
+              disabled={isPending}
             >
               Cancel
             </Button>
-            <Button>Update Event</Button>
-            {/* <Button type="submit" disabled={pending}>
-              {pending ? "Updating..." : "Update Event"}
-            </Button> */}
+            {/* <Button>Update Event</Button> */}
+            <Button type="submit" disabled={isPending}>
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isPending ? "Updating..." : "Update Event"}
+            </Button>
           </div>
         </form>
       </DialogContent>

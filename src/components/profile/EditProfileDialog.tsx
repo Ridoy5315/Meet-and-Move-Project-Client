@@ -124,9 +124,6 @@ const EditProfileDialog = ({
     if (state?.success) {
       handledRef.current = true;
       toast.success(state.message || "Profile updated successfully");
-      // if (formRef.current) {
-      //   formRef.current.reset();
-      // }
       handleClose();
       onClose();
       onSuccess();
@@ -141,11 +138,6 @@ const EditProfileDialog = ({
       } else {
         toast.error(state.message || "Something went wrong");
       }
-      // if (selectedFile && fileInputRef.current) {
-      //   const dataTransfer = new DataTransfer();
-      //   dataTransfer.items.add(selectedFile);
-      //   fileInputRef.current.files = dataTransfer.files;
-      // }
     }
   }, [state, onClose, onSuccess, open]);
 

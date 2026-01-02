@@ -40,7 +40,6 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "EVENT",
     date: "",
     registrationDeadline: "",
     startTime: "",
@@ -72,7 +71,6 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
       startTransition(() => {
         setFormData({
           title: "",
-          category: "EVENT",
           date: "",
           registrationDeadline: "",
           startTime: "",
@@ -119,7 +117,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
               <InputFieldError field="title" state={state} />
             </Field>
 
-            <Field>
+            {/* <Field>
               <FieldLabel htmlFor="category">Type</FieldLabel>
               <select
                 id="category"
@@ -134,7 +132,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
                 <option value="ACTIVITY">Activity</option>
               </select>
               <InputFieldError field="category" state={state} />
-            </Field>
+            </Field> */}
           </div>
 
           {/* Date + Time */}
@@ -217,20 +215,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
               <InputFieldError field="location" state={state} />
             </Field>
 
-            {/* <Field className="flex items-end gap-2">
-              <input
-                id="isOnline"
-                name="isOnline"
-                type="checkbox"
-                checked={formData.isOnline}
-                onChange={(e) =>
-                  setFormData({ ...formData, isOnline: e.target.checked })
-                }
-              />
-              <label htmlFor="isOnline" className="text-sm">
-                Online
-              </label>
-            </Field> */}
+  
           </div>
 
           {/* Price + Capacity */}

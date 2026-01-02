@@ -3,7 +3,8 @@
 
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
-import { createEventZodSchema } from "@/zod/createEvent.validation";
+import { IEvent } from "@/types/event.interface";
+import { createEventZodSchema, updateEventZodSchema } from "@/zod/event.validation";
 import { revalidateTag } from "next/cache";
 
 export async function createEvent(
@@ -34,7 +35,6 @@ export async function createEvent(
   // 3️⃣ Build validation payload
   const validationPayload = {
     title: formData.get("title") as string,
-    category: formData.get("category") as "EVENT" | "ACTIVITY",
 
     date: formData.get("date") as string,
     registrationDeadline: formData.get("registrationDeadline") as string,
@@ -81,7 +81,6 @@ export async function createEvent(
   // 5️⃣ Backend JSON payload (NO file here)
   const backendPayload = {
     title: validatedPayload.data.title,
-    category: validatedPayload.data.category,
 
     date: validatedPayload.data.date,
     registrationDeadline: validatedPayload.data.registrationDeadline,
@@ -89,7 +88,6 @@ export async function createEvent(
     endTime: validatedPayload.data.endTime,
 
     location: validatedPayload.data.location,
-    isOnline: validatedPayload.data.isOnline,
 
     priceType: validatedPayload.data.priceType,
     price: validatedPayload.data.price,
@@ -120,8 +118,6 @@ export async function createEvent(
     if (result?.success) {
       revalidateTag("events", "default");
     }
-
-    console.log("create event result:", result);
     return result;
   } catch (error: any) {
     console.error("Create event error:", error);
@@ -160,85 +156,120 @@ export async function getAllEvents(queryString?: string) {
   }
 }
 
-// export async function updateEvent(id: string, _prevState: any, formData: FormData) {
-//     const experienceValue = formData.get("experience");
-//     const appointmentFeeValue = formData.get("appointmentFee");
 
+export async function updateEvent(
+  id: string,
+  _prevState: any,
+  formData: FormData
+) {
 
-//     const validationPayload: Partial<IDoctor> = {
-//         name: formData.get("name") as string,
-//         contactNumber: formData.get("contactNumber") as string,
-//         address: formData.get("address") as string,
-//         registrationNumber: formData.get("registrationNumber") as string,
-//         experience: experienceValue ? Number(experienceValue) : 0,
-//         gender: formData.get("gender") as "MALE" | "FEMALE",
-//         appointmentFee: appointmentFeeValue ? Number(appointmentFeeValue) : 0,
-//         qualification: formData.get("qualification") as string,
-//         currentWorkingPlace: formData.get("currentWorkingPlace") as string,
-//         designation: formData.get("designation") as string,
-//     };
+  const tagsRaw = formData.get("tags") as string;
 
-//     // Parse specialties array (for adding new specialties)
-//     const specialtiesValue = formData.get("specialties") as string;
-//     if (specialtiesValue) {
-//         try {
-//             const parsed = JSON.parse(specialtiesValue);
-//             if (Array.isArray(parsed) && parsed.length > 0) {
-//                 validationPayload.specialties = parsed;
-//             }
-//         } catch {
-//             // Ignore invalid JSON
-//         }
-//     }
+  let tags: string[] = [];
+  try {
+    const parsed = tagsRaw ? JSON.parse(tagsRaw) : [];
 
-//     // Parse removeSpecialties array (for removing existing specialties)
-//     const removeSpecialtiesValue = formData.get("removeSpecialties") as string;
-//     if (removeSpecialtiesValue) {
-//         try {
-//             const parsed = JSON.parse(removeSpecialtiesValue);
-//             if (Array.isArray(parsed) && parsed.length > 0) {
-//                 validationPayload.removeSpecialties = parsed;
-//             }
-//         } catch {
-//             // Ignore invalid JSON
-//         }
-//     }
-//     const validatedPayload = zodValidator(validationPayload, updateDoctorZodSchema);
+    tags = parsed
+      .flatMap((tag: string) => tag.split(",").map((t) => t.trim()))
+      .filter(Boolean);
+  } catch {
+    tags = [];
+  }
 
-//     if (!validatedPayload.success && validatedPayload.errors) {
-//         return {
-//             success: validatedPayload.success,
-//             message: "Validation failed",
-//             formData: validationPayload,
-//             errors: validatedPayload.errors,
-//         }
-//     }
+  const priceType = formData.get("priceType") as "FREE" | "PAID";
+  const price = priceType === "FREE" ? 0 : Number(formData.get("price"));
 
-//     if (!validatedPayload.data) {
-//         return {
-//             success: false,
-//             message: "Validation failed",
-//             formData: validationPayload,
-//         }
-//     }
+  const file = formData.get("image");
 
-//     try {
-//         const response = await serverFetch.patch(`/doctor/${id}`, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(validatedPayload.data),
-//         })
-//         const result = await response.json();
-//         return result;
-//     } catch (error: any) {
-//         console.log(error);
-//         return {
-//             success: false, message: `${process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'}`,
-//             formData: validationPayload,
-//         }
-//     }
-// }
+  // ---------- Build validation payload ----------
+  const validationPayload = {
+    title: formData.get("title") as string,
+    description: formData.get("description") as string,
+    date: formData.get("date") as string,
+    registrationDeadline: formData.get("registrationDeadline") as string,
+    startTime: formData.get("startTime") as string,
+    endTime: formData.get("endTime") as string,
+    location: formData.get("location") as string,
+    priceType: formData.get("priceType") as "FREE" | "PAID",
+    price: price,
+    capacity: Number(formData.get("capacity")),
+    tags,
+    image: file instanceof File && file.size > 0 ? file : undefined,
+  };
+
+  // ---------- Validate ----------
+  const validatedPayload = zodValidator(
+    validationPayload,
+    updateEventZodSchema
+  );
+
+  if (!validatedPayload.success && validatedPayload.errors) {
+    return {
+      success: false,
+      message: "Validation failed",
+      formData: validatedPayload,
+      errors: validatedPayload.errors,
+    };
+  }
+
+  if (!validatedPayload.data) {
+    return {
+      success: false,
+      message: "Validation failed",
+      formData: validatedPayload,
+    };
+  }
+
+  const backendPayload = {
+    title: validatedPayload.data.title,
+
+    date: validatedPayload.data.date,
+    registrationDeadline: validatedPayload.data.registrationDeadline,
+    startTime: validatedPayload.data.startTime,
+    endTime: validatedPayload.data.endTime,
+
+    location: validatedPayload.data.location,
+
+    priceType: validatedPayload.data.priceType,
+    price: validatedPayload.data.price,
+
+    capacity: validatedPayload.data.capacity,
+
+    description: validatedPayload.data.description,
+    tags: validatedPayload.data.tags,
+  };
+
+    const newFormData = new FormData();
+    newFormData.append("data", JSON.stringify(backendPayload));
+
+    if (validatedPayload.data.image) {
+    newFormData.append("file", validatedPayload.data.image as File);
+  }
+
+  try {
+
+    const response = await serverFetch.patch(`/event/update-event/${id}`, {
+      body: newFormData,
+    });
+
+    const result = await response.json();
+
+    if (result?.success) {
+      revalidateTag("events", "default");
+    }
+    return result;
+  } catch (error: any) {
+    console.error(error);
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong",
+      formData: validatedPayload,
+    };
+  }
+}
 
 export async function softDeleteEvent(id: string) {
   try {

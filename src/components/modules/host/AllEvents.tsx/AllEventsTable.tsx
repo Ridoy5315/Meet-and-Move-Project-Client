@@ -74,7 +74,7 @@ const AllEventsTable = ({ events }: EventsTableProps) => {
         onClose={() => setEditingEvent(null)}
         onSuccess={() => {
           setEditingEvent(null);
-          handleRefresh();
+          setTimeout(() => handleRefresh(), 100);
         }}
       />
     </>
