@@ -10,7 +10,7 @@ import {
   MoreHorizontal,
   Trash,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,10 +52,13 @@ export default function ManagementTable<T>({
   emptyMessage = "No records found.",
   isRefreshing = false,
 }: ManagementTableProps<T>) {
+  const pathname = usePathname();
   const hasActions = onView || onEdit || onDelete;
   const router = useRouter();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
+
+  const isHistoryPage = pathname === "/host/dashboard/history";
 
   const currentSortBy = searchParams.get("sortBy") || "";
   const currentSortOrder = searchParams.get("sortOrder") || "desc";
@@ -158,13 +161,13 @@ export default function ManagementTable<T>({
                             View
                           </DropdownMenuItem>
                         )}
-                        {onEdit && (
+                        {onEdit && !isHistoryPage && (
                           <DropdownMenuItem onClick={() => onEdit(item)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                         )}
-                        {onDelete && (
+                        {onDelete && !isHistoryPage && (
                           <DropdownMenuItem
                             onClick={() => onDelete(item)}
                             className="text-destructive"

@@ -8,6 +8,7 @@ export type Gender = "MALE" | "FEMALE";
 
 export interface UserProfile {
   name: string;
+  email?: string;
   username?: string;
   profilePhoto?: string;
   gender?: Gender;

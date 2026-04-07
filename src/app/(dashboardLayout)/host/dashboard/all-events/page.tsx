@@ -1,9 +1,5 @@
 import AllEventsTable from "@/components/modules/host/AllEvents.tsx/AllEventsTable";
-import { FilterDate } from "@/components/shared/filters/DateFilter";
-import FilterActions from "@/components/shared/filters/FilterActions";
-import { FilterSearch } from "@/components/shared/filters/SearchInput";
-import { FilterSelect } from "@/components/shared/filters/SelectFilter";
-import PageFilters from "@/components/shared/page/PageFilters";
+import EventFilters from "@/components/modules/host/AllEvents.tsx/EventFilters";
 import PageHeader from "@/components/shared/page/PageHeader";
 import PageLayout from "@/components/shared/page/PageLayout";
 import PageTable from "@/components/shared/page/PageTable";
@@ -30,33 +26,18 @@ const AllEventsPage = async({
   return (
     <PageLayout
       header={
-        <PageHeader title="Events" description="Manage and filter all events" />
+        <PageHeader title="Events Overview" description="Oversee and manage every event created on the platform." />
       }
     >
-      <PageFilters>
-        <FilterSearch placeholder="Search events..." />
-
-        <FilterSelect
-          placeholder="Status"
-          options={[
-            { label: "All", value: "all" },
-            { label: "Upcoming", value: "upcoming" },
-            { label: "Completed", value: "completed" },
-          ]}
-        />
-
-        <FilterDate />
-
-        <FilterActions  />
-      </PageFilters>
+      <EventFilters />
 
       <PageTable>
         <Suspense fallback={<TableSkeleton columns={6} rows={8} />}>
           <AllEventsTable events={eventsResult.data}></AllEventsTable>
           <TablePagination
-          currentPage={eventsResult?.meta?.page || 1}
-          totalPages={totalPages || 1}
-        />
+            currentPage={eventsResult?.meta?.page || 1}
+            totalPages={totalPages || 1}
+          />
         </Suspense>
       </PageTable>
     </PageLayout>

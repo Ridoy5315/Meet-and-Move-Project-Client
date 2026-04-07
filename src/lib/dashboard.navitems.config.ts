@@ -198,13 +198,13 @@ export const hostNavItems: SidebarNavSection[] = [
       },
       {
         title: "Upcoming Events",
-        href: "/host/dashboard/events/upcoming-events",
+        href: "/host/dashboard/upcoming-events",
         icon: "CalendarClock",
         roles: ["HOST"],
       },
       {
         title: "Past Events",
-        href: "/host/dashboard/events/history",
+        href: "/host/dashboard/history",
         icon: "History",
         roles: ["HOST"],
       },

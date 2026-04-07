@@ -5,12 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarNavSection } from "@/types/navSection.interface";
 
-import { UserInfo } from "@/types/user.interface";
+import { UserProfile } from "@/types/user.interface";
 import { ArrowLeftFromLine, Bell, Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";
 import UserDropdown from "./UserDrpdown";
 import Link from "next/link";
+import { UserRole } from "@/lib/auth-utils";
+
+
+interface UserInfo {
+  userInfo: UserProfile;
+  role: UserRole;
+}
 
 interface DashboardNavbarContentProps {
   userInfo: UserInfo;

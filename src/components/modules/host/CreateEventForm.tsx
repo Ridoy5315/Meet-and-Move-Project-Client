@@ -32,7 +32,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
 
   const [state, formAction, isPending] = useActionState(
     createEvent.bind(null, profile?.id),
-    null
+    null,
   );
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -41,6 +41,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
   const [formData, setFormData] = useState({
     title: "",
     date: "",
+    registrationStartDate: "",
     registrationDeadline: "",
     startTime: "",
     endTime: "",
@@ -72,6 +73,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
         setFormData({
           title: "",
           date: "",
+          registrationStartDate: "",
           registrationDeadline: "",
           startTime: "",
           endTime: "",
@@ -143,12 +145,32 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
                 id="date"
                 name="date"
                 type="date"
+                min={formData.registrationDeadline || undefined}
                 value={formData.date}
                 onChange={(e) =>
                   setFormData({ ...formData, date: e.target.value })
                 }
               />
               <InputFieldError field="date" state={state} />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="registrationStartDate">
+                Registration Start Date
+              </FieldLabel>
+              <Input
+                id="registrationStartDate"
+                name="registrationStartDate"
+                type="date"
+                value={formData.registrationStartDate}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    registrationStartDate: e.target.value,
+                  })
+                }
+              />
+              <InputFieldError field="registrationStartDate" state={state} />
             </Field>
 
             <Field>
@@ -159,6 +181,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
                 id="registrationDeadline"
                 name="registrationDeadline"
                 type="date"
+                min={formData.registrationStartDate || undefined}
                 value={formData.registrationDeadline}
                 onChange={(e) =>
                   setFormData({
@@ -214,8 +237,6 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
               />
               <InputFieldError field="location" state={state} />
             </Field>
-
-  
           </div>
 
           {/* Price + Capacity */}
@@ -327,7 +348,7 @@ export default function CreateEventForm({ data }: ProfileActionsProps) {
                 // disabled={!document.getElementById("tags-input")?.value}
                 onClick={() => {
                   const input = document.getElementById(
-                    "tags-input"
+                    "tags-input",
                   ) as HTMLInputElement;
 
                   if (!input?.value) return;

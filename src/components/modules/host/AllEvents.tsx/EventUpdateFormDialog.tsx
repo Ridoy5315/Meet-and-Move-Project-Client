@@ -42,23 +42,26 @@ const EventUpdateDialog = ({
 }: EventUpdateDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const hasHandledSuccess = useRef(false);
-  const toastShownRef = useRef(false);
+  const prevStateRef = useRef<any>(null);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(
+    () => event?.tags?.map(capitalizeFirstLetter) || [],
+  );
   const [tagInput, setTagInput] = useState("");
 
-  const [priceType, setPriceType] = useState<"FREE" | "PAID">("FREE");
+  const [priceType, setPriceType] = useState<"FREE" | "PAID">(
+    () => event?.priceType || "FREE",
+  );
 
   const [state, formAction, isPending] = useActionState(
     (prevState: any, formData: FormData) => {
       if (formData.get("_reset") === "true") return null; // Initial null state
       return updateEvent.bind(null, event?.id)(prevState, formData);
     },
-    null
+    null,
   );
-  const prevStateRef = useRef(state);
 
   const handleAddTag = () => {
     const value = tagInput.trim();
@@ -74,60 +77,51 @@ const EventUpdateDialog = ({
     setTagInput("");
   };
 
-  useEffect(() => {
-    if (!open || !event) return;
+  // useEffect(() => {
+  //   if (!open || !event) return;
 
-    setPriceType(event.priceType);
-    setTags(event.tags.map(capitalizeFirstLetter));
-    setTagInput("");
-    setSelectedFile(null);
+  //   setPriceType(event.priceType);
+  //   setTags(event.tags.map(capitalizeFirstLetter));
+  //   setTagInput("");
+  //   setSelectedFile(null);
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  }, [open, event?.id]);
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.value = "";
+  //   }
+  //   const resetFormData = new FormData();
+  //   resetFormData.append("_reset", "true");
+  //   formAction(resetFormData);
+  // }, [open, event?.id, event?.priceType, event?.tags,event, formAction]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setSelectedFile(file || null);
   };
 
-  const isCompleted = event?.lifecycleStatus === "COMPLETED";
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
-  const isRegistrationClosed =
-    new Date(event?.registrationDeadline) < new Date();
+  const hasResetAction = useRef(false);
 
   useEffect(() => {
-    if (state?.success && prevStateRef.current?.success !== true) {
-      if (!toastShownRef.current) {
-        toastShownRef.current = true;
-        toast.success(state.message || "Event updated successfully", {
-          id: "event-update-success",
-        });
+    if (!open && !hasResetAction.current) {
+      hasResetAction.current = true;
+      prevStateRef.current = null;
+      if (formRef.current) {
+        const resetFormData = new FormData();
+        resetFormData.append("_reset", "true");
+        formAction(resetFormData);
       }
-      if (formRef.current) formRef.current.reset();
-      onClose();
-      setTimeout(() => {
-        onClose();
-        onSuccess();
-      }, 0);
-    } else if (
-      state &&
-      !state.success &&
-      prevStateRef.current?.success !== false
-    ) {
-      toast.error(state.message, { id: "event-update-error" });
     }
-    prevStateRef.current = state;
-  }, [state, onSuccess, onClose]);
 
-  useEffect(() => {
-    if (!open) {
-      toastShownRef.current = false;
-      hasHandledSuccess.current = false;
-      prevStateRef.current = null; // Add this
+    if (open) {
+      hasResetAction.current = false;
+      resetFileInput(); // Reset file input when opening - NO setState
     }
-  }, [open, state]);
+  }, [open, formAction]);
 
   useEffect(() => {
     return () => {
@@ -136,6 +130,65 @@ const EventUpdateDialog = ({
       }
     };
   }, [selectedFile]);
+
+  const isCompleted = event?.lifecycleStatus === "COMPLETED";
+
+  const isRegistrationClosed =
+    new Date(event?.registrationDeadline) < new Date();
+
+  //   useEffect(() => {
+  //     if (!state || state === prevStateRef.current) return;
+  //   prevStateRef.current = state;
+
+  //   // ✅ Success toast (show once per success)
+  //   if (state.success) {
+  //       toast.success(state.message || "Event updated successfully", {
+  //         id: "event-update-success", // Prevents duplicates
+  //       });
+
+  //       if (formRef.current) formRef.current.reset();
+  //       onClose();
+  //       setTimeout(() => onSuccess(), 0);
+  //       return;
+  //     }
+
+  //   // ✅ Error toast (show whenever new error happens)
+  //   toast.error(state.message || "Validation failed", {
+  //       id: "event-update-error", // Prevents duplicates
+  //     });
+  // }, [state, onClose, onSuccess]);
+
+  //   useEffect(() => {
+  //     if (!open) {
+  //       prevStateRef.current = null;
+
+  //       // Reset action state and form
+  //       if (formRef.current) {
+  //         const resetFormData = new FormData();
+  //         resetFormData.append("_reset", "true");
+  //         formAction(resetFormData);
+  //       }
+  //     }
+  //   }, [open, formAction]);
+  useEffect(() => {
+    if (!state || state === prevStateRef.current) return;
+    prevStateRef.current = state;
+
+    if (state.success) {
+      toast.success(state.message || "Event updated successfully", {
+        id: "event-update-success",
+      });
+
+      if (formRef.current) formRef.current.reset();
+      onClose();
+      setTimeout(() => onSuccess(), 0);
+      return;
+    }
+
+    toast.error(state.message || "Validation failed", {
+      id: "event-update-error",
+    });
+  }, [state, onClose, onSuccess]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -218,7 +271,11 @@ const EventUpdateDialog = ({
                   id="date"
                   name="date"
                   type="date"
-                  defaultValue={event?.date.split("T")[0]}
+                  defaultValue={
+                    event?.date
+                      ? new Date(event.date).toISOString().split("T")[0]
+                      : ""
+                  }
                 />
                 <InputFieldError state={state} field="date" />
               </Field>
@@ -232,7 +289,13 @@ const EventUpdateDialog = ({
                   id="registrationDeadline"
                   name="registrationDeadline"
                   type="date"
-                  defaultValue={event?.registrationDeadline.split("T")[0]}
+                  defaultValue={
+                    event?.registrationDeadline
+                      ? new Date(event.registrationDeadline)
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
                 />
                 <InputFieldError state={state} field="registrationDeadline" />
               </Field>

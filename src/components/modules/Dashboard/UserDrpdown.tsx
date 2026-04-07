@@ -10,10 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserRole } from "@/lib/auth-utils";
 import { logoutUser } from "@/services/auth/logoutUser";
-import { UserInfo } from "@/types/user.interface";
+import { UserProfile } from "@/types/user.interface";
 import { Settings, User } from "lucide-react";
 import Link from "next/link";
+
+interface UserInfo {
+  userInfo: UserProfile;
+  role: UserRole;
+}
 
 interface UserDropdownProps {
   userInfo: UserInfo;
@@ -28,15 +34,15 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" className="rounded-full">
           <span className="text-sm font-semibold">
-            {userInfo?.name?.charAt(0).toUpperCase()}
+            {userInfo?.userInfo?.name?.charAt(0).toUpperCase()}
           </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium">{userInfo.name}</p>
-            <p className="text-xs text-muted-foreground">{userInfo.email}</p>
+            <p className="text-sm font-medium">{userInfo?.userInfo?.name}</p>
+            <p className="text-xs text-muted-foreground">{userInfo?.userInfo?.email}</p>
             <p className="text-xs text-primary capitalize">
               {userInfo?.role?.toLowerCase()}
             </p>

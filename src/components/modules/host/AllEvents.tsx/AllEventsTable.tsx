@@ -71,6 +71,7 @@ const AllEventsTable = ({ events }: EventsTableProps) => {
 
       {/* Edit event Form Dialog */}
       <EventUpdateDialog
+      key={editingEvent?.id}
         open={!!editingEvent}
         event={editingEvent!}
         onClose={() => setEditingEvent(null)}

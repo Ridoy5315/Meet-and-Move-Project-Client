@@ -1,9 +1,11 @@
 import BecomeHostForm from "@/components/modules/BecomeHost/BecomeHostForm"
 import { getUserInfo } from "@/services/auth/getUserInfo";
-import { UserInfo } from "@/types/user.interface";
+import { UserProfile } from "@/types/user.interface";
+
+export const dynamic = 'force-dynamic';
 
 const BecomeHostPage = async() => {
-  const userInfo = (await getUserInfo()) as UserInfo;
+  const userInfo = (await getUserInfo()) as UserProfile;
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-muted/30">
       <div className="container mx-auto px-4 py-10 md:pt-10 md:pb-16">

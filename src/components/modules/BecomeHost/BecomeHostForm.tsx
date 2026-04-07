@@ -22,9 +22,15 @@ import { becomeHost } from "@/services/host/becomeHost";
 import Image from "next/image";
 import { useActionState, useEffect,  useRef,  useState, useTransition } from "react";
 import { toast } from "sonner";
+import { UserProfile } from "@/types/user.interface";
+
+// interface UserInfo {
+//   UserProfile: UserProfile;
+//   email: string;
+// }
 
 type BecomeHostFormProps = {
-  userInfo: UserInfo;
+  userInfo: UserProfile;
 };
 
 const BecomeHostForm = ({ userInfo }: BecomeHostFormProps) => {

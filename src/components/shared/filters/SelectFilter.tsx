@@ -1,3 +1,4 @@
+"use client";
 import {
   Select,
   SelectContent,
@@ -5,22 +6,51 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 
-export function FilterSelect({
+interface SelectFilterProps {
+  paramName: string; 
+  placeholder?: string;
+  defaultValue?: string;
+  options: { label: string; value: string }[];
+}
+
+export function SelectFilter({
+  paramName,
   placeholder,
   options,
-  onValueChange,
-}: {
-  placeholder: string;
-  options: { label: string; value: string }[];
-  onValueChange?: (value: string) => void;
-}) {
+  defaultValue = "All",
+}: SelectFilterProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const currentValue = searchParams.get(paramName) || defaultValue;
+
+  const handleChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value === defaultValue) {
+      params.delete(paramName);
+    } else if (value) {
+      params.set(paramName, value);
+    } else {
+      params.delete(paramName);
+    }
+
+    startTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
+  };
   return (
-    <Select onValueChange={onValueChange}>
+    <Select value={currentValue}
+      onValueChange={handleChange}
+      disabled={isPending}>
       <SelectTrigger className="w-full md:w-48">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value={defaultValue}>{defaultValue}</SelectItem>
         {options.map((opt) => (
           <SelectItem key={opt.value} value={opt.value}>
             {opt.label}
