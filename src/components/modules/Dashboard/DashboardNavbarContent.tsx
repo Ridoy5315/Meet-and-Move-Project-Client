@@ -5,12 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarNavSection } from "@/types/navSection.interface";
 
-import { UserInfo } from "@/types/user.interface";
-import { Bell, Menu, Search } from "lucide-react";
+import { UserProfile } from "@/types/user.interface";
+import { ArrowLeftFromLine, Bell, Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";
 import UserDropdown from "./UserDrpdown";
+import Link from "next/link";
+import { UserRole } from "@/lib/auth-utils";
 
+
+interface UserInfo {
+  userInfo: UserProfile;
+  role: UserRole;
+}
 
 interface DashboardNavbarContentProps {
   userInfo: UserInfo;
@@ -39,7 +46,7 @@ const DashboardNavbarContent = ({
   }, []);
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
-      <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
+      <div className="flex h-14 items-center justify-between gap-4 px-4 md:px-6">
         {/* Mobile Menu Toggle */}
         <Sheet open={isMobile && isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
@@ -58,6 +65,12 @@ const DashboardNavbarContent = ({
         </Sheet>
 
         {/* Search Bar */}
+        <Link href="/">
+          <Button>
+            <ArrowLeftFromLine />
+            Home
+          </Button>
+        </Link>
         <div className="flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

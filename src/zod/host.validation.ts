@@ -8,8 +8,12 @@ export const becomeHostZodSchema = z.object({
 
   username: z
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(50, "Username is too long"),
+    .min(3, "Username must be at least 3 characters long")
+    .max(30, "Username must not exceed 30 characters")
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can contain only letters, numbers, and underscores"
+    ),
 
   email: z.string().email("Invalid email address"),
 

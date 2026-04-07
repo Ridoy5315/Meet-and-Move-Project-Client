@@ -88,7 +88,7 @@ export const getNavbarItems = () => {
       items: [
         {
           title: "Create Events",
-          href: "/create-events",
+          href: "/host/dashboard/create-event",
           icon: "Settings2",
         },
       ],

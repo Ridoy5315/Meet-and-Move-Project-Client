@@ -59,7 +59,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
           confirmPassword: "",
         });
       });
-      toast.success("Registration successful! Please verify your email.");
+      toast.success("Registration successful!");
     }
   }, [state]);
   return (

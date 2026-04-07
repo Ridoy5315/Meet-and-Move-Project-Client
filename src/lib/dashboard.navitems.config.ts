@@ -74,7 +74,7 @@ export const getCommonNavItems = (role: UserRole) => {
     items: [
       {
         title: "Profile",
-        href: "/account/profile",
+        href: "/profile",
         icon: "User",
         roles: ["USER", "HOST", "ADMIN", "SUPER_ADMIN"],
       },
@@ -198,13 +198,13 @@ export const hostNavItems: SidebarNavSection[] = [
       },
       {
         title: "Upcoming Events",
-        href: "/host/dashboard/events/upcoming-events",
+        href: "/host/dashboard/upcoming-events",
         icon: "CalendarClock",
         roles: ["HOST"],
       },
       {
         title: "Past Events",
-        href: "/host/dashboard/events/history",
+        href: "/host/dashboard/history",
         icon: "History",
         roles: ["HOST"],
       },

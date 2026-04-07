@@ -4,13 +4,13 @@
 import { serverFetch } from "@/lib/server-fetch";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { getCookie } from "./tokenHandlers";
-import { UserInfo } from "@/types/user.interface";
+import { BaseProfile } from "@/types/user.interface";
 
-export const getUserInfo = async (): Promise<UserInfo | any> => {
-  let userInfo: UserInfo | any;
+
+export const getUserInfo = async (): Promise<BaseProfile | any> => {
+  let userInfo: BaseProfile | any;
   try {
     const response = await serverFetch.get("/auth/me", {
-      cache: "force-cache",
       next: { tags: ["user-info"] },
     });
 

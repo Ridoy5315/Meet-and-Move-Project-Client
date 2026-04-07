@@ -4,6 +4,7 @@
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
 import { registrationZodSchema } from "@/zod/auth.validation";
+import { loginUser } from "./loginUser";
 
 export const registerUser = async (
   _currentState: any,
@@ -48,11 +49,9 @@ export const registerUser = async (
 
     const result = await res.json();
 
-    //    if (result.success) {
-    //        await loginUser(_currentState, formData);
-    //    }
-
-    console.log(result);
+       if (result.success) {
+           await loginUser(_currentState, formData);
+       }
 
     return result;
   } catch (error: any) {

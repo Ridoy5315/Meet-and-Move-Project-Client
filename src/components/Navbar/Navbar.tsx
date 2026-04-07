@@ -27,6 +27,7 @@ import { getIconComponent } from "@/lib/icon-mapper";
 import { getNavbarItems, NavbarUserRole } from "@/lib/navItems.config";
 import { getNavbarByRole } from "@/lib/getNavbarByRole";
 import { getUserInfo } from "@/services/auth/getUserInfo";
+import LogoutButton from "../shared/LogoutButton";
 // import { UserInfo } from "@/types/user.interface";
 
 // interface NavbarProps {
@@ -168,9 +169,12 @@ const Navbar = async () => {
                 </Link>
               </>
             ) : (
-              <Link href="/account/profile">
-                <Button variant="outline">Profile</Button>
-              </Link>
+              <>
+                <Link href="/account/profile">
+                  <Button variant="outline">Profile</Button>
+                </Link>
+                <LogoutButton></LogoutButton>
+              </>
             )}
           </div>
         </div>

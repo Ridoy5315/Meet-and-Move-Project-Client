@@ -9,14 +9,10 @@ const serverFetchHelper = async (endpoint: string, options: RequestInit): Promis
     const { headers, ...restOptions } = options;
     const accessToken = await getCookie("accessToken");
 
-    console.log("endpoint", endpoint)
-
     //to stop recursion loop
     if (endpoint !== "/auth/refresh-token") {
         await getNewAccessToken();
     }
-
-    console.log("frontend accessToken", accessToken)
 
     const response = await fetch(`${BACKEND_API_URL}${endpoint}`, {
         headers: {

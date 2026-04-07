@@ -3,14 +3,20 @@
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { UserRole } from "@/lib/auth-utils";
 import { getIconComponent } from "@/lib/icon-mapper";
 import { cn } from "@/lib/utils";
 import { SidebarNavSection } from "@/types/navSection.interface";
 
-import { UserInfo } from "@/types/user.interface";
+import { UserProfile } from "@/types/user.interface";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+interface UserInfo {
+  userInfo: UserProfile;
+  role: UserRole;
+}
 
 interface DashboardSidebarContentProps {
   userInfo: UserInfo;
@@ -28,14 +34,14 @@ const DashboardSidebarContent = ({
   return (
     <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
       {/* Logo/Brand */}
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href={dashboardHome} className="flex items-center space-x-2">
+      <div className="flex h-14 items-center border-b px-6">
+        <Link href={dashboardHome} className="flex items-center space-x-2 py-3">
           <span className="text-xl font-bold text-primary">Meet & Move</span>
         </Link>
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-3 py-4">
+      <ScrollArea className="flex-1 px-3 py-4 h-[calc(100vh-12rem)]">
         <nav className="space-y-6">
           {navItems.map((section, sectionIdx) => (
             <div key={sectionIdx}>
@@ -87,11 +93,11 @@ const DashboardSidebarContent = ({
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-sm font-semibold text-primary">
-              {userInfo?.name?.charAt(0).toUpperCase()}
+              {userInfo?.userInfo?.name?.charAt(0).toUpperCase()}
             </span>
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium truncate">{userInfo.name}</p>
+            <p className="text-sm font-medium truncate">{userInfo?.userInfo?.name}</p>
             <p className="text-xs text-muted-foreground capitalize">
               {userInfo?.role?.toLowerCase()}
             </p>
